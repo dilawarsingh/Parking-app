@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,16 +23,72 @@ Route::middleware('auth:api')->post('/user', function (Request $request) {
 // Route::post('/login', 'apiController@index');
 Route::post('login', function (Request $request) {
 
-    if (auth()->attempt(['email' => $request->input('email'), 'password' => $request->input('password')])) {
-        // Authentication passed...
-        $user = auth()->user();
-        $user->remember_token = str_random(60);
-        $user->save();
-        return $user;
-    }
+    // if (auth()->attempt(['email' => $request->input('email'), 'password' => $request->input('password')])) {
+    //     // Authentication passed...
+    //     $user = auth()->user();
+    //     // $user->remember_token = str_random(60);
+    //     $user->save();
+    //     return $user;
+    // }
+
+
+    if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){
+            $user = auth()->user();
+           $success['remember_token'] =  $user->remember_token;
+           return response()->json(['success' => $success]);
+       }
 
     return response()->json([
         'error' => 'Unauthenticated user',
         'code' => 401,
     ], 401);
+});
+
+Route::post('profile', function (Request $request) {
+
+
+    $token = request('remember_token');
+    $output = User::where(['remember_token' => $token])->first();
+    if ($output != null) {
+        return response()->json($output->toArray());
+    
+    }
+    else{
+        return response()->json(['error'=>'data not found']);
+    }
+    
+ 
+ });
+
+Route::post('profile-update', function (Request $request) {
+   $token = request('remember_token');
+
+   $nutzung = request('nutzung');
+   $anrede = request('anrede');
+   $firma = request('firma');
+   $vorname = request('vorname');
+   $nachname = request('nachname');
+   $strabe = request('strabe');
+   $haus = request('haus');
+   $plz = request('plz');
+   $ort = request('ort');
+   $telefon = request('telefon');
+
+
+   $profile = User::where(['remember_token' => $token])->first();
+   $profile->nutzung = $nutzung;
+   $profile->anrede = $anrede;
+   $profile->firma = $firma;
+   $profile->vorname = $vorname;
+   $profile->nachname = $nachname;
+   $profile->strabe = $strabe;
+   $profile->haus = $haus;
+   $profile->plz = $plz;
+   $profile->ort = $ort;
+   $profile->telefon = $telefon;
+   $profile->save();
+
+   $output = User::all();
+   return response()->json($output->toArray());
+
 });
