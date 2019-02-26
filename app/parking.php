@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class parking extends Model
 {
+    protected $connection = 'mysql';
+    protected $primaryKey = 'id';
+    protected $table = 'parking';
     protected $fillable = [
         'userid',
         'xcord',
@@ -16,6 +19,7 @@ class parking extends Model
         'plz',
         'ort',
         'image',
+        'image_enc'
     ];
 
 }

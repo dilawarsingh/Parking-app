@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class complaints extends Model
 {
+    protected $connection = 'mysql';
+    protected $primaryKey = 'id';
+    protected $table = 'complaints';
     protected $fillable = [
         'userid',
         'xcord',
@@ -16,5 +19,6 @@ class complaints extends Model
         'tarif',
         'telefon',
         'image',
+        'image_enc'
     ];
 }
